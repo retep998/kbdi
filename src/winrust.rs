@@ -1,6 +1,3 @@
-use winapi::ctypes::c_char;
-use winapi::winrt::hstring::HSTRING;
-use winapi::winrt::winstring::*;
 use std::ptr::{null, null_mut};
 use std::ffi::{OsString, OsStr};
 use std::os::windows::ffi::{OsStrExt, OsStringExt};
@@ -8,6 +5,9 @@ use std::slice;
 use std::iter::once;
 use std::io;
 use std::ops::{Deref, DerefMut};
+// use winapi::ctypes::c_char;
+use winapi::winrt::hstring::HSTRING;
+use winapi::winrt::winstring::*;
 
 pub struct HString {
   __inner: HSTRING
@@ -22,6 +22,10 @@ impl HString {
         HString {
             __inner: null_mut()
         }
+    }
+
+    pub fn len(&self) -> usize {
+        unsafe { WindowsGetStringLen(self.__inner) as usize }
     }
 
     fn with_wide_string(vec: Option<Vec<u16>>) -> Result<HString, io::Error> {
@@ -41,10 +45,6 @@ impl HString {
         Ok(HString {
             __inner: handle
         })
-    }
-
-    pub fn len(&self) -> usize {
-        unsafe { WindowsGetStringLen(self.__inner) as usize }
     }
 }
 
